@@ -13,3 +13,48 @@ A small helper to check https://coveralls.io for a given commit hash.
 
 Development takes place here:
 https://github.com/cjw296/coveralls-check/
+
+Usage
+-----
+
+This was designed for use with Travis CI `Build Stages`__ where you want
+to check code coverage before doing a deployment or release.
+
+__ https://docs.travis-ci.com/user/build-stages/
+
+A sample ``.travis.yml`` using it is as follows::
+
+    language: python
+
+    sudo: false
+
+    python:
+      - "2.7"
+      - "3.6"
+
+    install:
+      - "pip install --upgrade pip setuptools"
+      - "pip install -Ue .[test]"
+
+    script: coverage run --source ... -m py.test
+
+    after_success:
+      - coveralls
+
+    jobs:
+      include:
+
+        - stage: coverage
+          python: 3.6
+          after_success: skip
+
+          install: "pip install -U coveralls-check"
+          script: "coveralls-check $TRAVIS_COMMIT"
+
+Changes
+-------
+
+1.0.0 (17 Aug 2017)
+~~~~~~~~~~~~~~~~~~~
+
+- Initial release
