@@ -54,6 +54,11 @@ A sample ``.travis.yml`` using it is as follows::
 Changes
 -------
 
+1.0.1 (17 Aug 2017)
+~~~~~~~~~~~~~~~~~~~
+
+- Fix packaging.
+
 1.0.0 (17 Aug 2017)
 ~~~~~~~~~~~~~~~~~~~
 
