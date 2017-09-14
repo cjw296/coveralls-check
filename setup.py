@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='coveralls-check',
-    version='1.0.1',
+    version='1.1.0',
     author='Chris Withers',
     author_email='chris@withers.org',
     license='MIT',

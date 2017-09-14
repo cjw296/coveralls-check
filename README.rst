@@ -54,6 +54,12 @@ A sample ``.travis.yml`` using it is as follows::
 Changes
 -------
 
+1.1.0 (14 Sep 2017)
+~~~~~~~~~~~~~~~~~~~
+
+- Add retrying logic to wait up to 5 minutes, by default, for coveralls
+  coverage data to be ready.
+
 1.0.1 (17 Aug 2017)
 ~~~~~~~~~~~~~~~~~~~
 
