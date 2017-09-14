@@ -1,6 +1,8 @@
-import responses
+import pytest
 from coveralls_check import main
-from testfixtures import replace, ShouldRaise, OutputCapture
+from mock import Mock
+from responses import RequestsMock
+from testfixtures import replace, ShouldRaise, OutputCapture, Replacer, compare
 
 SAMPLE_JSON = {
     "commit_sha": "xyz",
@@ -9,9 +11,23 @@ SAMPLE_JSON = {
 }
 
 
-@responses.activate
-@replace('sys.argv', ['script.py', 'xyz', '--fail-under', '99'])
-def test_ok():
+@pytest.fixture(autouse=True)
+def responses():
+    with RequestsMock() as responses:
+        yield responses
+
+
+@pytest.fixture(autouse=True)
+def mocks():
+    with Replacer() as r:
+        m = Mock()
+        m.argv = ['script.py', 'xyz']
+        r.replace('sys.argv', m.argv)
+        yield m
+
+
+def test_ok(responses, mocks):
+    mocks.argv.extend(['--fail-under', '99'])
     responses.add(responses.GET, 'https://coveralls.io/builds/xyz.json',
                   json=SAMPLE_JSON)
     with OutputCapture() as output:
@@ -19,9 +35,7 @@ def test_ok():
     output.compare('Coverage OK for xyz as 99.38 >= 99.0')
 
 
-@responses.activate
-@replace('sys.argv', ['script.py', 'xyz'])
-def test_not_ok():
+def test_not_ok(responses):
     responses.add(responses.GET, 'https://coveralls.io/builds/xyz.json',
                   json=SAMPLE_JSON)
     with ShouldRaise(SystemExit(2)):

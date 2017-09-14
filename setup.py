@@ -28,7 +28,7 @@ setup(
     include_package_data=True,
     install_requires=['requests'],
     extras_require=dict(
-        test=['pytest', 'testfixtures', 'responses', 'coveralls'],
+        test=['pytest', 'testfixtures', 'responses', 'coveralls', 'mock'],
         build=['setuptools-git', 'twine', 'wheel']
     ),
     entry_points={
