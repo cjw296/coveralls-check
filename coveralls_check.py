@@ -1,4 +1,6 @@
 from __future__ import print_function
+
+import logging
 from argparse import ArgumentParser
 
 import backoff
@@ -6,6 +8,12 @@ import requests
 import sys
 
 url = 'https://coveralls.io/builds/{}.json'
+
+
+def setup_logging():
+    logger = logging.getLogger('backoff')
+    logger.addHandler(logging.StreamHandler())
+    logger.setLevel(logging.INFO)
 
 
 def message(args, covered, template):
@@ -43,12 +51,11 @@ def parse_args():
 
 def main():
     args = parse_args()
-
+    setup_logging()
     get_coverage_ = decorate(get_coverage, args)
-
     covered = get_coverage_(args.commit)
     if covered is None:
-        message(args, covered, 'No coverage information available')
+        print('No coverage information available for {}'.format(args.commit))
         sys.exit(1)
     elif covered < args.fail_under:
         message(args, covered, 'Failed coverage check for {} as {} < {}')

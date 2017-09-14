@@ -53,4 +53,9 @@ def test_coveralls_returns_none(responses, mocks):
             main()
     compare(mocks.sleep.call_count, expected=29)
     compare(set(c[1][0] for c in mocks.sleep.mock_calls), expected={10})
-    output.compare('No coverage information available')
+    expected = (
+        'Backing off get_coverage(...) for 10.0s (None)\n'*29 +
+        'Giving up get_coverage(...) after 30 tries (None)\n'+
+        'No coverage information available for xyz\n'
+    )
+    output.compare(expected)
