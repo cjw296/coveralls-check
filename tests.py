@@ -42,3 +42,12 @@ def test_not_ok(responses):
         with OutputCapture() as output:
             main()
     output.compare('Failed coverage check for xyz as 99.38 < 100')
+
+
+def test_coveralls_returns_none(responses):
+    responses.add(responses.GET, 'https://coveralls.io/builds/xyz.json',
+                  json={"covered_percent": None})
+    with ShouldRaise(SystemExit(1)):
+        with OutputCapture() as output:
+            main()
+    output.compare('No coverage information available')

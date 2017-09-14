@@ -31,7 +31,10 @@ def main():
     args = parse_args()
     covered = get_coverage(args.commit)
 
-    if covered < args.fail_under:
+    if covered is None:
+        message(args, covered, 'No coverage information available')
+        sys.exit(1)
+    elif covered < args.fail_under:
         message(args, covered, 'Failed coverage check for {} as {} < {}')
         sys.exit(2)
     else:
