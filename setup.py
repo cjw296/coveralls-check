@@ -26,7 +26,7 @@ setup(
     py_modules=['coveralls_check'],
     zip_safe=False,
     include_package_data=True,
-    install_requires=['requests'],
+    install_requires=['requests', 'backoff'],
     extras_require=dict(
         test=['pytest', 'testfixtures', 'responses', 'coveralls', 'mock'],
         build=['setuptools-git', 'twine', 'wheel']

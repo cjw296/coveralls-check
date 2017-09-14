@@ -23,6 +23,7 @@ def mocks():
         m = Mock()
         m.argv = ['script.py', 'xyz']
         r.replace('sys.argv', m.argv)
+        r.replace('time.sleep', m.sleep)
         yield m
 
 
@@ -44,10 +45,12 @@ def test_not_ok(responses):
     output.compare('Failed coverage check for xyz as 99.38 < 100')
 
 
-def test_coveralls_returns_none(responses):
+def test_coveralls_returns_none(responses, mocks):
     responses.add(responses.GET, 'https://coveralls.io/builds/xyz.json',
                   json={"covered_percent": None})
     with ShouldRaise(SystemExit(1)):
         with OutputCapture() as output:
             main()
+    compare(mocks.sleep.call_count, expected=29)
+    compare(set(c[1][0] for c in mocks.sleep.mock_calls), expected={10})
     output.compare('No coverage information available')
