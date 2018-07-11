@@ -61,6 +61,11 @@ The ``COVERALLS_REPO_TOKEN`` is set in the ``secure`` section, which can be obta
 Changes
 -------
 
+1.2.1 (11 Jul 2018)
+-------------------
+
+- Fix packaging and copyright.
+
 1.2.0 (11 Jul 2018)
 -------------------
 
