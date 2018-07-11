@@ -31,6 +31,7 @@ jobs:
       script: "coveralls-check $TRAVIS_COMMIT --parallel-build-number $TRAVIS_BUILD_NUMBER --repo-token $COVERALLS_REPO_TOKEN"
 
     - stage: release
+      if: tag IS present
       python: 3.6
       script: skip
       # work around https://github.com/travis-ci/travis-ci/issues/8337:
