@@ -71,9 +71,22 @@ def test_parallel_build(responses, mocks):
     mocks.argv.extend(['--parallel-build-number', '99', '--repo-token', 'thetoken'])
     with OutputCapture() as output:
         main()
-    output.compare('Coverage OK for xyz as 100 >= 100')
+    output.compare('Confirmed end of parallel build\n'
+                   'Coverage OK for xyz as 100 >= 100')
     post = responses.calls[0].request
     compare(post.url,
             expected='https://coveralls.io/webhook?repo_token=thetoken')
     compare(json.loads(post.body),
             expected={"payload": {"build_num": 99, "status": "done"}})
+
+
+def test_parallel_build_bad_response(responses, mocks):
+    responses.add(responses.POST, 'https://coveralls.io/webhook',
+                  json={"mock": 'uh oh'},
+                  status=500)
+    mocks.argv.extend(['--parallel-build-number', '99', '--repo-token', 'thetoken'])
+    with ShouldRaise(SystemExit(1)):
+        with OutputCapture() as output:
+            main()
+    output.compare('Attempt to confirmed end of parallel build got 500:\n'
+                   'b\'{"mock": "uh oh"}\'')

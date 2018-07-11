@@ -40,14 +40,25 @@ def decorate(func, args):
 
 def ensure_parallel_done(args):
     if args.parallel_build_number:
-        requests.post(DONE_URL,
-                      params={'repo_token': args.repo_token},
-                      json={
-                          "payload": {
-                              "build_num": args.parallel_build_number,
-                              "status": "done"
-                          }
-                      })
+        response = requests.post(
+            DONE_URL,
+            params={'repo_token': args.repo_token},
+            json={
+                "payload": {
+                    "build_num": args.parallel_build_number,
+                    "status": "done"
+                }
+            }
+        )
+        if response.status_code == 200:
+            print('Confirmed end of parallel build')
+        else:
+            print(
+                'Attempt to confirmed end of parallel build got {}:\n{}'.format(
+                    response.status_code, response.content
+                )
+            )
+            sys.exit(1)
 
 
 def parse_args():
