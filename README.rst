@@ -61,6 +61,11 @@ The ``COVERALLS_REPO_TOKEN`` is set in the ``secure`` section, which can be obta
 Changes
 -------
 
+1.2.0 (11 Jul 2018)
+-------------------
+
+- Add support for Coveralls parallel build stuff.
+
 1.1.0 (14 Sep 2017)
 ~~~~~~~~~~~~~~~~~~~
 
