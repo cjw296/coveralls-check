@@ -1,17 +1,23 @@
 import json
+import sys
 
 import pytest
-from coveralls_check import main
 from mock import Mock
 from responses import RequestsMock
-from testfixtures import replace, ShouldRaise, OutputCapture, Replacer, compare
+from testfixtures import ShouldRaise, OutputCapture, Replacer, compare
+
+from coveralls_check import main
+
+if sys.version_info[0] == 2:
+    PY2 = True
+else:
+    PY2 = False
 
 SAMPLE_JSON = {
     "commit_sha": "xyz",
     "coverage_change": 0,
     "covered_percent": 99.38
 }
-
 
 @pytest.fixture(autouse=True)
 def responses():
@@ -88,5 +94,14 @@ def test_parallel_build_bad_response(responses, mocks):
     with ShouldRaise(SystemExit(1)):
         with OutputCapture() as output:
             main()
-    output.compare('Attempt to confirmed end of parallel build got 500:\n'
-                   'b\'{"mock": "uh oh"}\'')
+    if PY2:
+        expected=(
+            'Attempt to confirmed end of parallel build got 500:\n'
+            '{"mock": "uh oh"}'
+        )
+    else:
+        expected=(
+            'Attempt to confirmed end of parallel build got 500:\n'
+            'b\'{"mock": "uh oh"}\''
+        )
+    output.compare(expected)
