@@ -1,5 +1,5 @@
 # See LICENSE.rst for license details.
-# Copyright (c) 2017 Chris Withers
+# Copyright (c) 2017-2018 Chris Withers
 
 import os
 
