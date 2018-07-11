@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from coveralls_check import main
 from mock import Mock
@@ -59,3 +61,19 @@ def test_coveralls_returns_none(responses, mocks):
         'No coverage information available for xyz\n'
     )
     output.compare(expected)
+
+
+def test_parallel_build(responses, mocks):
+    responses.add(responses.POST, 'https://coveralls.io/webhook',
+                  json={"mock": 'ok'})
+    responses.add(responses.GET, 'https://coveralls.io/builds/xyz.json',
+                  json={"covered_percent": 100})
+    mocks.argv.extend(['--parallel-build-number', '99', '--repo-token', 'thetoken'])
+    with OutputCapture() as output:
+        main()
+    output.compare('Coverage OK for xyz as 100 >= 100')
+    post = responses.calls[0].request
+    compare(post.url,
+            expected='https://coveralls.io/webhook?repo_token=thetoken')
+    compare(json.loads(post.body),
+            expected={"payload": {"build_num": 99, "status": "done"}})
