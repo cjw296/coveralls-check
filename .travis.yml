@@ -3,6 +3,9 @@ language: python
 # for container-y goodness:
 sudo: false
 
+env:
+  secure: "r9ZM4KOnCohwd5xiXOCC4iTNWCrVJpEyN1wMPpaJTVentTnUs1pABw7CUgic0kYWbjC5BWh3kQBsXb1uQrxkwNWfBqmCuhBxSlxdd5mwVjF+jwnwq4R16pJ59l2NPThKirGw5xodLK/Sd5jw9eejToXx6Ak6ZHMzFan3A7DqmzXttx5mqmjmNujFIYRT19B7u6T06/cOWAOypajKJp2npHx5c2AXrd5+HdD4qfYwUBI1Rtj1GEKcQvDivOSOps3lXgr0Pwm6dH1VDegpvzlzcZ4KSVo6rvM7eImDuzgwloZlOuolqN7MCpKdTildnsYnTfErltb1oJlYkkkG0zMUMjA73owSTmXXpRoXfJpXuoxW8xwjG3K94uLRCB/ujFt/myHfUwJBw/OvnFOI2TAaS+B6MXgISjBNS6NXyJU+iM7K3zjOtzPO08yYy1he8gtX7sQ4k8wB0hPRImbbD9pPww7Oh6+vGyyTcGauy5R55fP2ZP0pj6VHAVqavQfRcUKxrcQ8fQBqV201wKgZJQgHe41+5K2NQlHV2toh32D3mzoT+GdRovSFnhJk/V3jXdblN7h2oEjVa7EGogwlbXtNoS3gikar9IVrw88wXuHwjujG7uB2yzBYiXG6tE2UJoliRXx0q0yImSnX2cWUXxIbuDvlj0U4FYYFNnY1BYU6N3Y="
+
 python:
   - "2.7"
   - "3.6"
@@ -14,7 +17,7 @@ install:
 script: coverage run --source coveralls_check,tests -m py.test tests.py
 
 after_success:
-  - coveralls
+  - "COVERALLS_PARALLEL=true coveralls"
 
 jobs:
   include:
@@ -25,7 +28,7 @@ jobs:
 
       # woof woof!
       install: "pip install -Ue ."
-      script: "coveralls-check $TRAVIS_COMMIT"
+      script: "coveralls-check $TRAVIS_COMMIT --parallel-build-number $TRAVIS_BUILD_NUMBER --repo-token $COVERALLS_REPO_TOKEN"
 
     - stage: release
       python: 3.6

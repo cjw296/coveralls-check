@@ -7,7 +7,8 @@ import backoff
 import requests
 import sys
 
-url = 'https://coveralls.io/builds/{}.json'
+POLL_URL = 'https://coveralls.io/builds/{}.json'
+DONE_URL = 'https://coveralls.io/webhook'
 
 
 def setup_logging():
@@ -23,7 +24,7 @@ def message(args, covered, template):
 
 
 def get_coverage(commit):
-    response = requests.get(url.format(commit))
+    response = requests.get(POLL_URL.format(commit))
     data = response.json()
     return data['covered_percent']
 
@@ -37,6 +38,29 @@ def decorate(func, args):
     )(func)
 
 
+def ensure_parallel_done(args):
+    if args.parallel_build_number:
+        response = requests.post(
+            DONE_URL,
+            params={'repo_token': args.repo_token},
+            json={
+                "payload": {
+                    "build_num": args.parallel_build_number,
+                    "status": "done"
+                }
+            }
+        )
+        if response.status_code == 200:
+            print('Confirmed end of parallel build')
+        else:
+            print(
+                'Attempt to confirmed end of parallel build got {}:\n{}'.format(
+                    response.status_code, response.content
+                )
+            )
+            sys.exit(1)
+
+
 def parse_args():
     parser = ArgumentParser()
     parser.add_argument('commit', help='the commit hash to check')
@@ -46,12 +70,22 @@ def parse_args():
     parser.add_argument('--max-wait', type=int, default=5,
                         help='Maximum time, in minutes, to wait for Coveralls '
                              'data. Defaults to 5.')
+    parser.add_argument('--parallel-build-number', type=int,
+                        help='The build number, eg $TRAVIS_BUILD_NUMBER.')
+    parser.add_argument('--repo-token',
+                        help='Required if --parallel-build-number is used and '
+                             'should be the token use when POSTing back to '
+                             'coveralls to mark the parallel build as done. '
+                             'Should come from a secret.')
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
     setup_logging()
+
+    ensure_parallel_done(args)
+
     get_coverage_ = decorate(get_coverage, args)
     covered = get_coverage_(args.commit)
     if covered is None:
