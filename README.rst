@@ -28,6 +28,9 @@ A sample ``.travis.yml`` using it is as follows::
 
     sudo: false
 
+    env:
+      secure: "..."
+
     python:
       - "2.7"
       - "3.6"
@@ -39,7 +42,7 @@ A sample ``.travis.yml`` using it is as follows::
     script: coverage run --source ... -m py.test
 
     after_success:
-      - coveralls
+      - "COVERALLS_PARALLEL=true coveralls"
 
     jobs:
       include:
@@ -49,7 +52,11 @@ A sample ``.travis.yml`` using it is as follows::
           after_success: skip
 
           install: "pip install -U coveralls-check"
-          script: "coveralls-check $TRAVIS_COMMIT"
+          script: "coveralls-check $TRAVIS_COMMIT --parallel-build-number $TRAVIS_BUILD_NUMBER --repo-token $COVERALLS_REPO_TOKEN"
+
+The ``COVERALLS_REPO_TOKEN`` is set in the ``secure`` section, which can be obtained using::
+
+    travis encrypt COVERALLS_REPO_TOKEN=(your coveralls repo token)
 
 Changes
 -------
