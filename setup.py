@@ -13,7 +13,7 @@ setup(
     license='MIT',
     description="Check coverage at https://coveralls.io",
     long_description=open('README.rst').read(),
-    url='https://github.com/cjw296/coverage-check',
+    url='https://github.com/cjw296/coveralls-check',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
